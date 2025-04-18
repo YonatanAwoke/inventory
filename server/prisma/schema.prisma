@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String  
+  email    String   @unique
+  password String
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  products  Product[] 
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  name       String
+  quantity   Int
+  price      Float
+  expireDate DateTime?
+  categoryId Int       
+  category   Category  @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime  @default(now())
+  Purchase Purchase[]
+}
+
+model Purchase {
+  id           Int          @id @default(autoincrement())
+  productId    Int
+  product      Product      @relation(fields: [productId], references: [id])
+  quantity     Int
+  costPrice    Float
+  expireDate   DateTime?
+  purchaseDate DateTime?
+  Sale Sale[]
+}
+
+
+model Sale {
+  id          Int       @id @default(autoincrement())
+  purchase    Purchase  @relation(fields: [purchaseId], references: [id])
+  purchaseId  Int
+
+  quantity    Int
+  salePrice   Float
+  saleDate    DateTime  @default(now())
+  total       Float
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
+
+
