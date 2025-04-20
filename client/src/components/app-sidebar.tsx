@@ -55,7 +55,7 @@ const data = {
     },
     {
       title: "Sales",
-      url: "#",
+      url: "/sale",
       icon: IconChartBar,
     },
     {

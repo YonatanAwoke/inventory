@@ -17,6 +17,7 @@ import EditCategory from "./pages/EditCategory"
 import Purchase from "./pages/Purchase"
 import CreatePurchase from "./pages/CreatePurchase"
 import EditPurchase from "./pages/EditPurchase"
+import Sale from "./pages/Sale"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -102,6 +103,14 @@ const router = createBrowserRouter(
         </ProtectedRoute>
       }
     />
+    <Route
+        path="sale"
+        element={
+          <ProtectedRoute>
+            <Sale />
+          </ProtectedRoute>
+        }
+      />
     </Route>
   )
 )
