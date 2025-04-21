@@ -32,6 +32,7 @@ export async function fetchPurchases() {
     costPrice: number;
     expireDate?: string;
     purchaseDate?: string;
+    budgetId: number; 
   }) {
     const res = await fetch("http://localhost:3000/api/purchases/create", {
       method: "POST",
@@ -49,6 +50,7 @@ export async function fetchPurchases() {
   
     return res.json();
   }
+  
   
   export async function updatePurchase(id: number, data: {
     productId?: number;
