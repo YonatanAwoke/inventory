@@ -47,26 +47,39 @@ function SaleCard() {
 
   const handleCreateSale = async (purchaseId: number) => {
     const sale = saleData[purchaseId]
+    const quantityToSell = Number(sale?.quantity || 0)
+  
+    if (quantityToSell <= 0) {
+      alert("Quantity must be greater than 0")
+      return
+    }
+  
     try {
       await createSale({
         purchaseId,
-        quantity: Number(sale?.quantity || 0),
+        quantity: quantityToSell,
         salePrice: Number(sale?.salePrice || 0),
         saleDate: sale?.saleDate || new Date().toISOString(),
       })
+  
+      // Update local state for remaining quantity
+      setPurchases((prev) =>
+        prev.map((p) =>
+          p.id === purchaseId
+            ? { ...p, quantity: p.quantity - quantityToSell }
+            : p
+        )
+      )
+  
       alert("Sale created successfully!")
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert(error.message || "Failed to create sale")
-      } else {
-        alert("Failed to create sale")
-      }
+      alert(error instanceof Error ? error.message : "Failed to create sale")
     }
   }
-
+  
   const handleCreateAllSales = async () => {
     const saleEntries = Object.entries(saleData)
-
+  
     const validSales = saleEntries.filter(([idStr, sale]) => {
       const id = Number(idStr)
       const purchase = purchases.find((p) => p.id === id)
@@ -79,12 +92,12 @@ function SaleCard() {
         sale.saleDate
       )
     })
-
+  
     if (validSales.length === 0) {
       alert("No valid sales to process.")
       return
     }
-
+  
     try {
       await Promise.all(
         validSales.map(([idStr, sale]) =>
@@ -96,11 +109,31 @@ function SaleCard() {
           })
         )
       )
+  
+      // Update local state quantities
+      setPurchases((prev) =>
+        prev.map((purchase) => {
+          const sale = saleData[purchase.id]
+          if (
+            sale &&
+            Number(sale.quantity) > 0 &&
+            Number(sale.quantity) <= purchase.quantity
+          ) {
+            return {
+              ...purchase,
+              quantity: purchase.quantity - Number(sale.quantity),
+            }
+          }
+          return purchase
+        })
+      )
+  
       alert("Sales created successfully!")
     } catch {
       alert("Failed to create one or more sales")
     }
   }
+  
 
   return (
     <div className="p-6 space-y-4">

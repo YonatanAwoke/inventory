@@ -18,6 +18,10 @@ import Purchase from "./pages/Purchase"
 import CreatePurchase from "./pages/CreatePurchase"
 import EditPurchase from "./pages/EditPurchase"
 import Sale from "./pages/Sale"
+import Revenue from "./pages/Revenue"
+import Budget from "./pages/Budget"
+import CreateBudget from "./pages/CreateBudget"
+import EditBudget from "./pages/EditBudget"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -96,10 +100,42 @@ const router = createBrowserRouter(
         }
       />
       <Route
+        path="budget"
+        element={
+          <ProtectedRoute>
+            <Budget />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="budget/create"
+        element={
+          <ProtectedRoute>
+            <CreateBudget />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+      path="budget/edit/:id"
+      element={
+        <ProtectedRoute>
+          <EditBudget />
+        </ProtectedRoute>
+      }
+    />
+      <Route
       path="purchase/edit/:id"
       element={
         <ProtectedRoute>
           <EditPurchase />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="revenue"
+      element={
+        <ProtectedRoute>
+          <Revenue />
         </ProtectedRoute>
       }
     />

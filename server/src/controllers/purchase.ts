@@ -2,30 +2,54 @@ import {  Request, Response } from "express";
 import prisma from "../db";
 
 export const createPurchase = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { productId, quantity, costPrice, expireDate, purchaseDate } = req.body;
-  
-      const product = await prisma.product.findUnique({ where: { id: productId } });
-      if (!product) {
-        res.status(404).json({ error: "Product not found" });
-        return;
-      }
-  
-      const purchase = await prisma.purchase.create({
-        data: {
-          productId,
-          quantity,
-          costPrice,
-          expireDate: expireDate ? new Date(expireDate) : undefined,
-          purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date()
-        },
-      });
-  
-      res.json(purchase);
-    } catch (err: any) {
-      res.status(400).json({ error: err.message });
+  try {
+    const { productId, quantity, costPrice, expireDate, purchaseDate } = req.body;
+
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) {
+      res.status(404).json({ error: "Product not found" });
+      return;
     }
-  };  
+
+    const budget = await prisma.budget.findFirst(); // Or find by ID if passed from frontend
+    if (!budget) {
+      res.status(500).json({ error: "Budget not initialized" });
+      return;
+    }
+
+    const purchaseCost = quantity * costPrice;
+
+    if (budget.amount < purchaseCost) {
+      res.status(400).json({ error: "Insufficient budget for this purchase." });
+      return;
+    }
+
+    const purchase = await prisma.purchase.create({
+      data: {
+        productId,
+        budgetId: budget.id, // ✅ Link the purchase to this budget
+        quantity,
+        costPrice,
+        expireDate: expireDate ? new Date(expireDate) : undefined,
+        purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date(),
+      },
+    });
+
+    await prisma.budget.update({
+      where: { id: budget.id },
+      data: {
+        amount: {
+          decrement: purchaseCost,
+        },
+      },
+    });
+
+    res.json(purchase);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
   
 
   export const getPurchases = async (_req: Request, res: Response) => {

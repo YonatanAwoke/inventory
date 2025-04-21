@@ -65,7 +65,12 @@ const data = {
     },
     {
       title: "Revenue",
-      url: "#",
+      url: "/revenue",
+      icon: IconUsers,
+    },
+    {
+      title: "Budget",
+      url: "/budget",
       icon: IconUsers,
     },
   ],

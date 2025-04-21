@@ -35,14 +35,16 @@ model Product {
 }
 
 model Purchase {
-  id           Int          @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   productId    Int
-  product      Product      @relation(fields: [productId], references: [id])
+  product      Product   @relation(fields: [productId], references: [id])
+  budgetId     Int?      
+  budget       Budget?   @relation(fields: [budgetId], references: [id])
   quantity     Int
   costPrice    Float
   expireDate   DateTime?
   purchaseDate DateTime?
-  Sale Sale[]
+  Sale         Sale[]
 }
 
 
@@ -50,16 +52,20 @@ model Sale {
   id          Int       @id @default(autoincrement())
   purchase    Purchase  @relation(fields: [purchaseId], references: [id])
   purchaseId  Int
-
   quantity    Int
   salePrice   Float
   saleDate    DateTime  @default(now())
   total       Float
-
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
-
-
+model Budget {
+  id        Int        @id @default(autoincrement())
+  name      String
+  amount    Float
+  purchases Purchase[]
+  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+}
 
 

@@ -9,7 +9,7 @@ export async function fetchSales() {
   
     const sales = await res.json();
   
-    // Return data with editable fields
+
     type Sale = {
       id: number;
       purchase?: { product?: { name: string } };
@@ -23,10 +23,10 @@ export async function fetchSales() {
     return sales.map((sale: Sale) => ({
       id: sale.id,
       productName: sale.purchase?.product?.name || "Unknown",
-      quantity: sale.quantity,       // editable
-      salePrice: sale.salePrice,     // editable
-      saleDate: sale.saleDate,       // editable
-      total: sale.total,             // editable (or recomputed on frontend)
+      quantity: sale.quantity,       
+      salePrice: sale.salePrice,     
+      saleDate: sale.saleDate,       
+      total: sale.total,             
       purchaseId: sale.purchaseId,
     }));
   }
@@ -38,12 +38,11 @@ export async function createSale(data: {
     salePrice: number;
     saleDate?: string;
   }) {
-    // Frontend validation
+
     if (data.quantity <= 0) {
       throw new Error("Sale quantity must be greater than 0");
     }
   
-    // Fetch purchase data to validate remaining quantity
     const purchaseRes = await fetch(`http://localhost:3000/api/purchases/${data.purchaseId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
