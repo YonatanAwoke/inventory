@@ -22,6 +22,7 @@ import Revenue from "./pages/Revenue"
 import Budget from "./pages/Budget"
 import CreateBudget from "./pages/CreateBudget"
 import EditBudget from "./pages/EditBudget"
+import BudgetDetail from "./pages/BudgetDetail"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -112,6 +113,14 @@ const router = createBrowserRouter(
         element={
           <ProtectedRoute>
             <CreateBudget />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="budget/:id"
+        element={
+          <ProtectedRoute>
+            <BudgetDetail />
           </ProtectedRoute>
         }
       />

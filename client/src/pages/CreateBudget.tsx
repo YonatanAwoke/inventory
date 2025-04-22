@@ -16,7 +16,7 @@ const CreateBudget: React.FC = () => {
   
     try {
       await createBudget(name, amount);
-      navigate("/");
+      navigate("/budget");
     } catch (err) {
       console.error(err);
       alert("Failed to create budget.");

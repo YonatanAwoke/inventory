@@ -84,3 +84,21 @@ export async function fetchBudgets() {
       throw new Error("Failed to delete budget");
     }
   };
+
+  export async function getBudgetById(id: number) {
+    const res = await fetch(`http://localhost:3000/api/budgets/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+  
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to fetch budget");
+    }
+  
+    return res.json();
+  }
+  

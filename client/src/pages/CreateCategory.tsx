@@ -49,7 +49,7 @@ function CreateCategory() {
     <div className="max-w-xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Create New Category</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+        <div className="grid gap-3">
           <Label htmlFor="name">Category Name</Label>
           <Input
             name="name"

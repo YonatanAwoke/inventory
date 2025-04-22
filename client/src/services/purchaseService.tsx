@@ -23,16 +23,19 @@ export async function fetchPurchases() {
       throw new Error(errorData.message || "Failed to fetch purchase");
     }
   
-    return res.json();
-  }
-  
+    const data = await res.json();
+    return {
+      ...data,
+      budgetId: data.budget?.id || data.budgetId, 
+    };
+  }  
   export async function createPurchase(data: {
     productId: number;
     quantity: number;
     costPrice: number;
     expireDate?: string;
     purchaseDate?: string;
-    budgetId: number; 
+    budgetId: number;
   }) {
     const res = await fetch("http://localhost:3000/api/purchases/create", {
       method: "POST",
@@ -45,20 +48,28 @@ export async function fetchPurchases() {
   
     if (!res.ok) {
       const errorData = await res.json();
-      throw new Error(errorData.message || "Failed to create purchase");
+      throw new Error(errorData.error || "Failed to create purchase");
     }
   
-    return res.json();
+    const result = await res.json();
+  
+    console.log("Purchase made from budget:", result.budget?.name);
+  
+    return result;
   }
   
   
-  export async function updatePurchase(id: number, data: {
-    productId?: number;
-    quantity?: number;
-    costPrice?: number;
-    expireDate?: string;
-    purchaseDate?: string;
-  }) {
+  export async function updatePurchase(
+    id: number,
+    data: {
+      productId?: number;
+      quantity?: number;
+      costPrice?: number;
+      expireDate?: string;
+      purchaseDate?: string;
+      budgetId?: number; 
+    }
+  ) {
     const res = await fetch(`http://localhost:3000/api/purchases/${id}`, {
       method: "PUT",
       headers: {
@@ -75,6 +86,7 @@ export async function fetchPurchases() {
   
     return res.json();
   }
+  
   
   export async function deletePurchase(id: number) {
     const res = await fetch(`http://localhost:3000/api/purchases/${id}`, {

@@ -1,8 +1,8 @@
-// pages/purchase/EditPurchase.tsx
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { fetchProducts } from "@/services/productService"
 import { fetchPurchaseById, updatePurchase } from "@/services/purchaseService"
+import { fetchBudgets } from "@/services/budgetService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,9 +10,13 @@ import { Label } from "@/components/ui/label"
 function EditPurchase() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+
   const [products, setProducts] = useState<{ id: string; name: string }[]>([])
+  const [budgets, setBudgets] = useState<{ id: string; name: string }[]>([])
+
   const [formData, setFormData] = useState({
     productId: "",
+    budgetId: "",
     quantity: "",
     costPrice: "",
     purchaseDate: "",
@@ -21,11 +25,13 @@ function EditPurchase() {
 
   useEffect(() => {
     fetchProducts().then(setProducts)
+    fetchBudgets().then(setBudgets)
 
     if (id) {
       fetchPurchaseById(Number(id)).then((data) =>
         setFormData({
           productId: data.productId.toString(),
+          budgetId: data.budgetId.toString(),
           quantity: data.quantity.toString(),
           costPrice: data.costPrice.toString(),
           purchaseDate: data.purchaseDate?.slice(0, 10) || "",
@@ -44,6 +50,7 @@ function EditPurchase() {
     e.preventDefault()
     await updatePurchase(Number(id), {
       productId: Number(formData.productId),
+      budgetId: Number(formData.budgetId),
       quantity: Number(formData.quantity),
       costPrice: Number(formData.costPrice),
       purchaseDate: new Date(formData.purchaseDate).toISOString(),
@@ -69,6 +76,24 @@ function EditPurchase() {
             {products.map((prod) => (
               <option key={prod.id} value={prod.id}>
                 {prod.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <Label htmlFor="budgetId">Budget</Label>
+          <select
+            name="budgetId"
+            value={formData.budgetId}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          >
+            <option value="">Select a budget</option>
+            {budgets.map((budget) => (
+              <option key={budget.id} value={budget.id}>
+                {budget.name}
               </option>
             ))}
           </select>

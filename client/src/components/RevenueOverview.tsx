@@ -131,7 +131,7 @@ export default function RevenueOverview() {
               <span className="text-xl">{item.icon}</span>
               <div>
                 <p className="font-medium">{item.name}</p>
-                <p className="text-gray-600 text-sm">{item.quantity.toLocaleString()} sold</p>
+                <p className="text-gray-600 text-sm">{item.difference.toLocaleString()} sold</p>
               </div>
             </div>
             <div className="text-right text-sm">

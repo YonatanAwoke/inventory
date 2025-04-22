@@ -39,8 +39,10 @@ function CategoryTable() {
 
   return (
     <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
       <h2 className="text-xl font-bold mb-4">Category List</h2>
-        <Button onClick={() => navigate("/category/create")}>Create Product</Button>
+        <Button onClick={() => navigate("/category/create")}>Create Category</Button>
+        </div>
       {loading ? (
         <p>Loading...</p>
       ) : (

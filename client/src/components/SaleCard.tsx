@@ -147,13 +147,14 @@ function SaleCard() {
             onCheckedChange={setBatchMode}
           />
         </div>
-      </div>
-
-      {batchMode && (
+        {batchMode && (
         <Button onClick={handleCreateAllSales} className="mb-4">
           Create Sales
         </Button>
       )}
+      </div>
+
+      
 
       {loading ? (
         <p>Loading purchases...</p>

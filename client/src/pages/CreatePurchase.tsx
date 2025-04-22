@@ -1,7 +1,7 @@
-// pages/purchase/CreatePurchase.tsx
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { fetchProducts } from "@/services/productService"
+import { fetchBudgets } from "@/services/budgetService"
 import { createPurchase } from "@/services/purchaseService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,8 +10,10 @@ import { Label } from "@/components/ui/label"
 function CreatePurchase() {
   const navigate = useNavigate()
   const [products, setProducts] = useState<{ id: string; name: string }[]>([])
+  const [budgets, setBudgets] = useState<{ id: string; name: string }[]>([])
   const [formData, setFormData] = useState({
     productId: "",
+    budgetId: "",
     quantity: "",
     costPrice: "",
     purchaseDate: "",
@@ -21,6 +23,7 @@ function CreatePurchase() {
 
   useEffect(() => {
     fetchProducts().then(setProducts)
+    fetchBudgets().then(setBudgets)
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -31,6 +34,7 @@ function CreatePurchase() {
   const validateForm = () => {
     const errors: Record<string, string> = {}
     if (!formData.productId) errors.productId = "Please select a product."
+    if (!formData.budgetId) errors.budgetId = "Please select a budget."
     if (Number(formData.quantity) <= 0) errors.quantity = "Quantity must be greater than 0."
     if (Number(formData.costPrice) <= 0) errors.costPrice = "Cost price must be greater than 0."
     if (!formData.purchaseDate) errors.purchaseDate = "Purchase date is required."
@@ -47,6 +51,7 @@ function CreatePurchase() {
     if (Object.keys(formErrors).length === 0) {
       await createPurchase({
         productId: Number(formData.productId),
+        budgetId: Number(formData.budgetId),
         quantity: Number(formData.quantity),
         costPrice: Number(formData.costPrice),
         purchaseDate: new Date(formData.purchaseDate).toISOString(),
@@ -60,6 +65,7 @@ function CreatePurchase() {
     <div className="max-w-xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Create New Purchase</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Product Select */}
         <div>
           <Label htmlFor="productId">Product</Label>
           <select
@@ -70,14 +76,30 @@ function CreatePurchase() {
           >
             <option value="">Select a product</option>
             {products.map((prod) => (
-              <option key={prod.id} value={prod.id}>
-                {prod.name}
-              </option>
+              <option key={prod.id} value={prod.id}>{prod.name}</option>
             ))}
           </select>
           {errors.productId && <p className="text-red-500 text-sm">{errors.productId}</p>}
         </div>
 
+        {/* Budget Select */}
+        <div>
+          <Label htmlFor="budgetId">Budget</Label>
+          <select
+            name="budgetId"
+            value={formData.budgetId}
+            onChange={handleChange}
+            className={`w-full border p-2 rounded-md ${errors.budgetId ? "border-red-500" : ""}`}
+          >
+            <option value="">Select a budget</option>
+            {budgets.map((budget) => (
+              <option key={budget.id} value={budget.id}>{budget.name}</option>
+            ))}
+          </select>
+          {errors.budgetId && <p className="text-red-500 text-sm">{errors.budgetId}</p>}
+        </div>
+
+        {/* Quantity */}
         <div>
           <Label htmlFor="quantity">Quantity</Label>
           <Input
@@ -85,12 +107,12 @@ function CreatePurchase() {
             type="number"
             value={formData.quantity}
             onChange={handleChange}
-            required
             className={errors.quantity ? "border-red-500" : ""}
           />
           {errors.quantity && <p className="text-red-500 text-sm">{errors.quantity}</p>}
         </div>
 
+        {/* Cost Price */}
         <div>
           <Label htmlFor="costPrice">Cost Price</Label>
           <Input
@@ -99,12 +121,12 @@ function CreatePurchase() {
             step="0.01"
             value={formData.costPrice}
             onChange={handleChange}
-            required
             className={errors.costPrice ? "border-red-500" : ""}
           />
           {errors.costPrice && <p className="text-red-500 text-sm">{errors.costPrice}</p>}
         </div>
 
+        {/* Purchase Date */}
         <div>
           <Label htmlFor="purchaseDate">Purchase Date</Label>
           <Input
@@ -112,12 +134,12 @@ function CreatePurchase() {
             type="date"
             value={formData.purchaseDate}
             onChange={handleChange}
-            required
             className={errors.purchaseDate ? "border-red-500" : ""}
           />
           {errors.purchaseDate && <p className="text-red-500 text-sm">{errors.purchaseDate}</p>}
         </div>
 
+        {/* Expire Date */}
         <div>
           <Label htmlFor="expireDate">Expire Date (optional)</Label>
           <Input
