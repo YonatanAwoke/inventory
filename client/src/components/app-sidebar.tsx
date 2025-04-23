@@ -1,21 +1,23 @@
 import * as React from "react"
 import {
+  IconBrandProducthunt,
+  IconCalendarCheck,
   IconCamera,
-  IconChartBar,
+  IconCashRegister,
   IconDashboard,
   IconFileAi,
   IconFileDescription,
-  IconFolder,
   IconListDetails,
-  IconUsers,
+  IconPremiumRights,
+  IconReportMoney,
+  IconTax,
+  IconUsersPlus,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -24,21 +26,21 @@ import {
 import { StoreIcon } from "lucide-react"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+  // user: {
+  //   name: "shadcn",
+  //   email: "new@example.com",
+  //   avatar: "/avatars/shadcn.jpg",
+  // },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
       icon: IconDashboard,
     },
     {
       title: "Products",
       url: "/product",
-      icon: IconListDetails,
+      icon: IconBrandProducthunt,
     },
     {
       title: "Category",
@@ -48,22 +50,37 @@ const data = {
     {
       title: "Sales",
       url: "/sale",
-      icon: IconChartBar,
+      icon: IconCashRegister,
     },
     {
       title: "Purchase",
       url: "/purchase",
-      icon: IconFolder,
+      icon: IconReportMoney,
     },
     {
       title: "Revenue",
       url: "/revenue",
-      icon: IconUsers,
+      icon: IconTax,
     },
     {
       title: "Budget",
       url: "/budget",
-      icon: IconUsers,
+      icon: IconPremiumRights,
+    },
+    {
+      title: "Suppliers",
+      url: "/supplier",
+      icon: IconUsersPlus,
+    },
+    {
+      title: "Appointment",
+      url: "/appointment",
+      icon: IconCalendarCheck,
+    },
+    {
+      title: "Prescription",
+      url: "/prescription",
+      icon: IconFileDescription,
     },
   ],
   navClouds: [
@@ -173,9 +190,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser user={data.user} />
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   )
 }

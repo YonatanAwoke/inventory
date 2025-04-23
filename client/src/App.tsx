@@ -24,6 +24,9 @@ import Budget from "./pages/Budget";
 import CreateBudget from "./pages/CreateBudget";
 import EditBudget from "./pages/EditBudget";
 import BudgetDetail from "./pages/BudgetDetail";
+import Supplier from "./pages/Supplier";
+import Appointment from "./pages/Appointment";
+import Prescription from "./pages/Prescription";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -156,6 +159,30 @@ const router = createBrowserRouter(
           element={
             <ProtectedRoute>
               <Sale />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="supplier"
+          element={
+            <ProtectedRoute>
+              <Supplier />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="appointment"
+          element={
+            <ProtectedRoute>
+              <Appointment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="prescription"
+          element={
+            <ProtectedRoute>
+              <Prescription />
             </ProtectedRoute>
           }
         />

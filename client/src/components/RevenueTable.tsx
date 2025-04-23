@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchAllRevenue, RevenueData } from "@/services/revenueService";
-import {  Minus, ArrowRight, ArrowLeft, TrendingUp, TrendingDownIcon } from "lucide-react"; 
+import { Minus, ArrowRight, ArrowLeft, TrendingUp, TrendingDownIcon } from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -44,71 +44,79 @@ export default function RevenueList() {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm w-full">
+    <div className="bg-white p-4 rounded-xl shadow-sm w-full overflow-x-auto">
       <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
-      <table className="w-full text-sm text-left">
-        <thead className="text-gray-500 border-b">
-          <tr>
-            <th className="px-3 py-2">
-              <input
-                type="checkbox"
-                className="accent-indigo-500"
-                checked={selectAll}
-                onChange={toggleSelectAll}
-              />
-            </th>
-            <th className="px-3 py-2">Product</th>
-            <th className="px-3 py-2">Date</th>
-            <th className="px-3 py-2">Cost Price</th>
-            <th className="px-3 py-2">Sale Price</th>
-            <th className="px-3 py-2">Quantity</th>
-            <th className="px-3 py-2">Revenue</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
+
+      <div className="min-w-[640px]">
+        <table className="w-full text-sm text-left">
+          <thead className="text-gray-500 border-b">
             <tr>
-              <td colSpan={7} className="text-center py-6">Loading...</td>
+              <th className="px-3 py-2">
+                <input
+                  type="checkbox"
+                  className="accent-indigo-500"
+                  checked={selectAll}
+                  onChange={toggleSelectAll}
+                />
+              </th>
+              <th className="px-3 py-2">Product</th>
+              <th className="px-3 py-2">Date</th>
+              <th className="px-3 py-2">Cost Price</th>
+              <th className="px-3 py-2">Sale Price</th>
+              <th className="px-3 py-2">Quantity</th>
+              <th className="px-3 py-2">Revenue</th>
             </tr>
-          ) : currentData.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="text-center py-6">No revenue data found.</td>
-            </tr>
-          ) : (
-            currentData.map((rev) => (
-              <tr key={rev.saleId} className="border-b hover:bg-gray-50">
-                <td className="px-3 py-2">
-                  <input
-                    type="checkbox"
-                    className="accent-indigo-500"
-                    checked={selectedRows.includes(rev.saleId)}
-                    onChange={() => toggleSelectRow(rev.saleId)}
-                  />
-                </td>
-                <td className="px-3 py-2">{rev.productName}</td>
-                <td className="px-3 py-2">{rev.saleDate}</td>
-                <td className="px-3 py-2">{rev.costPrice}</td>
-                <td className="px-3 py-2">{rev.salePrice}</td>
-                <td className="px-3 py-2">{rev.quantity}</td>
-                <td className={`px-3 py-2 font-medium ${getRevenueStyle(rev.revenue)}`}>
-                  {rev.revenue}
-                  {getRevenueIcon(rev.revenue)}
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="text-center py-6">
+                  Loading...
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : currentData.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="text-center py-6">
+                  No revenue data found.
+                </td>
+              </tr>
+            ) : (
+              currentData.map((rev) => (
+                <tr key={rev.saleId} className="border-b hover:bg-gray-50">
+                  <td className="px-3 py-2">
+                    <input
+                      type="checkbox"
+                      className="accent-indigo-500"
+                      checked={selectedRows.includes(rev.saleId)}
+                      onChange={() => toggleSelectRow(rev.saleId)}
+                    />
+                  </td>
+                  <td className="px-3 py-2">{rev.productName}</td>
+                  <td className="px-3 py-2">{rev.saleDate}</td>
+                  <td className="px-3 py-2">{rev.costPrice}</td>
+                  <td className="px-3 py-2">{rev.salePrice}</td>
+                  <td className="px-3 py-2">{rev.quantity}</td>
+                  <td className={`px-3 py-2 font-medium ${getRevenueStyle(rev.revenue)}`}>
+                    {rev.revenue}
+                    {getRevenueIcon(rev.revenue)}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4 text-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 text-sm">
           <button
             className="text-indigo-600 disabled:text-gray-400"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            <ArrowLeft size={16} className="inline ml-1" />
+            <ArrowLeft size={16} className="inline mr-1" />
+            Previous
           </button>
           <span className="text-gray-600">
             Page {currentPage} of {totalPages}
@@ -118,6 +126,7 @@ export default function RevenueList() {
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
+            Next
             <ArrowRight size={16} className="inline ml-1" />
           </button>
         </div>
