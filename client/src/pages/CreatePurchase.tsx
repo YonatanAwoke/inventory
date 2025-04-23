@@ -179,14 +179,14 @@ const CreatePurchase: React.FC = () => {
                 <Calendar
                   mode="single"
                   selected={selectedExpireDate}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     setSelectedExpireDate(date)
                     setFormData((prev) => ({
                       ...prev,
                       expireDate: date ? date.toISOString().split("T")[0] : "",
                     }))
                   }}
-                  disabled={(date) => date < new Date()}
+                  disabled={(date: Date) => date < new Date()}
                   initialFocus
                 />
               </PopoverContent>

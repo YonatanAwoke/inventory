@@ -147,14 +147,14 @@ const CreateProduct: React.FC = () => {
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     setSelectedDate(date)
                     setFormData((prev) => ({
                       ...prev,
                       expireDate: date ? date.toISOString().split("T")[0] : "",
                     }))
                   }}
-                  disabled={(date) => date < new Date()}
+                  disabled={(date: Date) => date < new Date()}
                   initialFocus
                 />
               </PopoverContent>

@@ -150,7 +150,7 @@ function EditProduct() {
                 <Calendar
                   mode="single"
                   selected={formData.expireDate ? new Date(formData.expireDate) : undefined}
-                  onSelect={(date) =>
+                  onSelect={(date: Date | undefined) =>
                     setFormData((prev) => ({
                       ...prev,
                       expireDate: date ? format(date, "yyyy-MM-dd") : "",
