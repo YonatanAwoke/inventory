@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import prisma from "../db";
-const ProductStatus = {
-  OUT_OF_STOCK: "OUT_OF_STOCK",
-  IN_STOCK: "IN_STOCK",
-};
+
+enum ProductStatus {
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  IN_STOCK = "IN_STOCK",
+}
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
@@ -38,7 +39,7 @@ export const getProducts = async (_req: Request, res: Response) => {
       },
     });
 
-    const filtered = products.map((product: { id: number; name: string; image: string | null; status: string; expireDate: Date | null; category: { name: string } }) => ({
+    const filtered = products.map((product: { id: any; name: any; image: any; status: any; expireDate: any; category: { name: any; }; }) => ({
       id: product.id,
       name: product.name,
       image: product.image,
