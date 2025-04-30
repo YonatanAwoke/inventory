@@ -39,7 +39,7 @@ export const calculateRevenueForAllSales = async () => {
     },
   });
 
-  return sales.map((sale) => ({
+  return sales.map((sale: typeof sales[number]) => ({
     saleId: sale.id,
     revenue: (sale.salePrice - sale.purchase.costPrice) * sale.quantity,
     salePrice: sale.salePrice,

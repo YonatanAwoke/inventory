@@ -66,7 +66,15 @@ export const createPurchase = async (req: Request, res: Response): Promise<void>
         },
       });
   
-      const result = purchases.map((purchase) => ({
+      const result = purchases.map((purchase: { 
+        id: number; 
+        productId: number; 
+        product: { name: string }; 
+        quantity: number; 
+        costPrice: number; 
+        expireDate: Date | null; 
+        purchaseDate: Date; 
+      }) => ({
         id: purchase.id,
         productId: purchase.productId,
         productName: purchase.product.name,
