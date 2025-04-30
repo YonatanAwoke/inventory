@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import { ProductStatus } from "@prisma/client";
+import { stat } from "fs";
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { name, quantity, price, expireDate, categoryId } = req.body;
+    const { name, expireDate, categoryId, image } = req.body;
 
     const category = await prisma.category.findUnique({ where: { id: categoryId } });
     if (!category) {
@@ -13,8 +15,8 @@ export const createProduct = async (req: Request, res: Response) => {
     const product = await prisma.product.create({
       data: {
         name,
-        quantity,
-        price,
+        image: image || null,
+        status: ProductStatus.OUT_OF_STOCK,
         expireDate: expireDate ? new Date(expireDate) : undefined,
         categoryId,
       },
@@ -37,8 +39,8 @@ export const getProducts = async (_req: Request, res: Response) => {
     const filtered = products.map((product) => ({
       id: product.id,
       name: product.name,
-      quantity: product.quantity,
-      price: product.price,
+      image: product.image,
+      status: product.status,
       expireDate: product.expireDate,
       category: product.category.name,
     }));
@@ -51,12 +53,12 @@ export const getProducts = async (_req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, categoryId, quantity, price } = req.body;
+  const { name, categoryId, image, status } = req.body;
 
   try {
     const product = await prisma.product.update({
       where: { id: Number(id) },
-      data: { name, categoryId, quantity, price },
+      data: { name, categoryId, image, status },
     });
 
     res.json(product);
@@ -101,8 +103,8 @@ export const getProductById = async (req: Request, res: Response) : Promise<void
     const result = {
       id: product.id,
       name: product.name,
-      quantity: product.quantity,
-      price: product.price,
+      image: product.image,
+      status: product.status,
       expireDate: product.expireDate,
       categoryId: product.categoryId,
       category: product.category.name,

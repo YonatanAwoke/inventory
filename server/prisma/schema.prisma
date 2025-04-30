@@ -25,8 +25,8 @@ model Category {
 model Product {
   id         Int       @id @default(autoincrement())
   name       String
-  quantity   Int
-  price      Float
+  image      String?    
+  status     ProductStatus @default(OUT_OF_STOCK)
   expireDate DateTime?
   categoryId Int       
   category   Category  @relation(fields: [categoryId], references: [id])
@@ -68,4 +68,7 @@ model Budget {
   createdAt DateTime   @default(now())
 }
 
-
+enum ProductStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+}

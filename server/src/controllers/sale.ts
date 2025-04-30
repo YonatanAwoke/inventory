@@ -50,11 +50,6 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       data: { quantity: { decrement: quantity } },
     })
 
-    await prisma.product.update({
-      where: { id: purchase.productId },
-      data: { quantity: { decrement: quantity } },
-    })
-
     res.status(201).json(sale)
   } catch (error) {
     console.error("Error creating sale:", error)
