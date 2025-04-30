@@ -18,10 +18,11 @@ const CreateProduct: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [formData, setFormData] = useState({
     name: "",
-    quantity: "",
-    price: "",
+    image: null as File | null,
+    imagePreview: "",
     expireDate: "",
     categoryId: "",
+    status: "IN_STOCK",
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -35,13 +36,24 @@ const CreateProduct: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }))
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, imagePreview: reader.result as string }))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const validateForm = () => {
     const currentDate = new Date().toISOString().split("T")[0]
     const formErrors: Record<string, string> = {}
 
     if (formData.name.length > 50) formErrors.name = "Product name should not exceed 50 characters."
-    if (Number(formData.quantity) <= 0) formErrors.quantity = "Quantity must be greater than 0."
-    if (Number(formData.price) <= 0) formErrors.price = "Price must be greater than 0."
+    if (!formData.image) formErrors.image = "Please upload an image."
     if (formData.expireDate && formData.expireDate < currentDate) {
       formErrors.expireDate = "Expire date must be today or in the future."
     }
@@ -59,10 +71,11 @@ const CreateProduct: React.FC = () => {
     if (Object.keys(formErrors).length === 0) {
       setSubmitting(true)
       try {
+        const base64Image = formData.imagePreview
         await createProduct({
           name: formData.name,
-          quantity: Number(formData.quantity),
-          price: Number(formData.price),
+          image: base64Image,
+          status: formData.status as "IN_STOCK" | "OUT_OF_STOCK",
           expireDate: formData.expireDate || null,
           categoryId: Number(formData.categoryId),
         })
@@ -96,39 +109,37 @@ const CreateProduct: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-2 font-medium">Quantity</label>
+            <label className="block text-gray-300 mb-2 font-medium">Image</label>
             <Input
-              name="quantity"
-              type="number"
-              value={formData.quantity}
-              onChange={handleChange}
-              className="bg-[#15171E] text-white placeholder:text-gray-500 border-gray-700 focus:border-[#8B5CF6]"
-              placeholder="0"
-              min={1}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="bg-[#15171E] text-white border-gray-700 focus:border-[#8B5CF6]"
               disabled={submitting}
-              required
             />
-            {errors.quantity && <p className="text-red-400 text-sm mt-1">{errors.quantity}</p>}
+            {formData.imagePreview && (
+              <img src={formData.imagePreview} alt="Preview" className="mt-2 rounded-md max-h-32" />
+            )}
+            {errors.image && <p className="text-red-400 text-sm mt-1">{errors.image}</p>}
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-2 font-medium">Price</label>
-            <Input
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
+            <label className="block text-gray-300 mb-2 font-medium">Status</label>
+            <select
+              name="status"
+              value={formData.status}
               onChange={handleChange}
-              className="bg-[#15171E] text-white placeholder:text-gray-500 border-gray-700 focus:border-[#8B5CF6]"
-              placeholder="$0.00"
+              className="bg-[#15171E] text-white border border-gray-700 rounded-md p-2 w-full focus:border-[#8B5CF6]"
               disabled={submitting}
               required
-            />
-            {errors.price && <p className="text-red-400 text-sm mt-1">{errors.price}</p>}
+            >
+              <option value="IN_STOCK">In Stock</option>
+              <option value="OUT_OF_STOCK">Out of Stock</option>
+            </select>
           </div>
 
           <div>
-          <label className="block text-gray-300 mb-2 font-medium">Expire Date</label>
+            <label className="block text-gray-300 mb-2 font-medium">Expire Date</label>
             <Popover>
               <PopoverTrigger asChild>
                 <button
@@ -158,7 +169,7 @@ const CreateProduct: React.FC = () => {
                   initialFocus
                 />
               </PopoverContent>
-              </Popover>
+            </Popover>
             {errors.expireDate && <p className="text-red-400 text-sm mt-1">{errors.expireDate}</p>}
           </div>
 

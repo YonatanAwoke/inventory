@@ -16,11 +16,10 @@ import { DeleteConfirmModal } from "./DeleteConfirmModal"
 interface ProductType {
   id: string
   name: string
-  quantity: number
-  price: number
   expireDate: string | null
   category: string
-  status?: 'Active' | 'Pending' | 'Inactive' | 'On Sale' | 'Bouncing'
+  image?: string
+  status?: 'OUT_OF_STOCK' | 'IN_STOCK'
 }
 
 function ProductTable() {
@@ -67,8 +66,8 @@ function ProductTable() {
     }
     
     return sortConfig.direction === 'asc'
-      ? (aValue as number) - (bValue as number)
-      : (bValue as number) - (aValue as number)
+      ? (aValue as unknown as number) - (bValue as unknown as number)
+      : (bValue as unknown as number) - (aValue as unknown as number)
   })
 
   const [deleting, setDeleting] = useState(false);
@@ -100,16 +99,10 @@ const confirmDelete = async () => {
 
   const getStatusColor = (status?: string) => {
     switch (status?.toLowerCase()) {
-      case 'active':
+      case 'in_stock':
         return 'bg-green-100 text-green-800'
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'inactive':
+      case 'out_of_stock':
         return 'bg-red-100 text-red-800'
-      case 'on sale':
-        return 'bg-blue-100 text-blue-800'
-      case 'bouncing':
-        return 'bg-purple-100 text-purple-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -168,27 +161,9 @@ const confirmDelete = async () => {
                   </div>
                 </th>
                 <th className="p-4 text-left font-medium text-gray-500 cursor-pointer"
-                    onClick={() => handleSort('price')}>
-                  <div className="flex items-center gap-2">
-                    Price
-                    {sortConfig.key === 'price' && (
-                      sortConfig.direction === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
-                    )}
-                  </div>
-                </th>
-                <th className="p-4 text-left font-medium text-gray-500 cursor-pointer"
-                    onClick={() => handleSort('quantity')}>
-                  <div className="flex items-center gap-2">
-                    Stock
-                    {sortConfig.key === 'quantity' && (
-                      sortConfig.direction === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
-                    )}
-                  </div>
-                </th>
-                <th className="p-4 text-left font-medium text-gray-500 cursor-pointer"
                     onClick={() => handleSort('category')}>
                   <div className="flex items-center gap-2">
-                    Type
+                    Category
                     {sortConfig.key === 'category' && (
                       sortConfig.direction === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
                     )}
@@ -203,17 +178,19 @@ const confirmDelete = async () => {
                 <tr key={product.id} className="border-t hover:bg-gray-50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200" />
+                    <img
+                        src={product.image || "/vite.svg"}
+                        alt={product.name}
+                        className="h-10 w-10 rounded-full object-cover border"
+                      />
                       <span className="font-medium">{product.name}</span>
                     </div>
                   </td>
-                  <td className="p-4">ETB {product.price.toFixed(2)}</td>
-                  <td className="p-4">{product.quantity}</td>
                   <td className="p-4">{product.category}</td>
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
-                      {product.status || 'N/A'}
-                    </span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
+                    {product.status || 'N/A'}
+                  </span>
                   </td>
                   <td className="p-4 text-right">
                     <DropdownMenu>

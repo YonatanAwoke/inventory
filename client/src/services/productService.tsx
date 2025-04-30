@@ -24,10 +24,10 @@ export async function fetchProductById(id: number) {
 
 export async function createProduct(data: {
   name: string;
-  quantity: number;
-  price: number;
   expireDate: string | null;
   categoryId: number;
+  image?: string | null;
+  status: "IN_STOCK" | "OUT_OF_STOCK";
 }) {
   const res = await fetch(`${API_URL}/products/create`, {
     method: "POST",
@@ -50,10 +50,10 @@ export async function updateProduct(
   id: number,
   data: {
     name: string;
-    quantity: number;
-    price: number;
     expireDate: string | null;
     categoryId: number;
+    image?: string | null;
+    status: "IN_STOCK" | "OUT_OF_STOCK";
   }
 ) {
   const res = await fetch(`${API_URL}/products/${id}`, {
@@ -72,6 +72,7 @@ export async function updateProduct(
 
   return res.json();
 }
+
 
 export async function deleteProduct(id: number) {
   const res = await fetch(`${API_URL}/products/${id}`, {

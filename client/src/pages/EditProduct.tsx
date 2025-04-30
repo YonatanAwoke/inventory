@@ -16,10 +16,10 @@ function EditProduct() {
   const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     name: "",
-    quantity: "",
-    price: "",
     expireDate: "",
     categoryId: "",
+    status: "inStock",
+    image: "",
   })
   const [error, setError] = useState<string | null>(null)
 
@@ -30,10 +30,10 @@ function EditProduct() {
         const data = await fetchProductById(Number(id))
         setFormData({
           name: data.name,
-          quantity: data.quantity.toString(),
-          price: data.price.toString(),
           expireDate: data.expireDate ? data.expireDate.slice(0, 10) : "",
           categoryId: data.categoryId.toString(),
+          status: data.status, 
+          image: data.image || "", 
         })
       }
 
@@ -49,11 +49,27 @@ function EditProduct() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Handle the file upload and convert the image to base64
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      const file = files[0]
+      const reader = new FileReader()
+
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData((prev) => ({ ...prev, image: reader.result as string }))
+        }
+      }
+      reader.readAsDataURL(file) 
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    if (!formData.name.trim() || !formData.quantity || !formData.price || !formData.categoryId) {
+    if (!formData.name.trim() || !formData.categoryId) {
       setError("Please fill out all required fields.")
       return
     }
@@ -61,10 +77,10 @@ function EditProduct() {
     try {
       await updateProduct(Number(id), {
         name: formData.name,
-        quantity: Number(formData.quantity),
-        price: Number(formData.price),
         expireDate: formData.expireDate || null,
         categoryId: Number(formData.categoryId),
+        status: formData.status === "inStock" ? "IN_STOCK" : "OUT_OF_STOCK",
+        image: formData.image, 
       })
       navigate("/product")
     } catch {
@@ -109,31 +125,34 @@ function EditProduct() {
             />
           </div>
           <div>
-            <Label htmlFor="quantity" className="text-gray-300 mb-2 font-medium block">Quantity</Label>
-            <Input
-              id="quantity"
-              name="quantity"
-              type="number"
-              value={formData.quantity}
-              onChange={handleChange}
+            <Label htmlFor="image" className="text-gray-300 mb-2 font-medium block">Product Image</Label>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleFileChange}
               className="bg-[#15171E] text-white placeholder:text-gray-500 border-gray-700 focus:border-[#8B5CF6]"
-              placeholder="Quantity"
-              required
             />
+            {formData.image && (
+              <img
+                src={formData.image} // This is the base64 image string
+                alt="Product"
+                className="mt-4 rounded-md w-full max-h-60 object-cover"
+              />
+            )}
           </div>
           <div>
-            <Label htmlFor="price" className="text-gray-300 mb-2 font-medium block">Price</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
+            <Label htmlFor="status" className="text-gray-300 mb-2 font-medium block">Status</Label>
+            <select
+              name="status"
+              value={formData.status}
               onChange={handleChange}
-              className="bg-[#15171E] text-white placeholder:text-gray-500 border-gray-700 focus:border-[#8B5CF6]"
-              placeholder="0.00"
+              className="w-full bg-[#15171E] text-white border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
               required
-            />
+            >
+              <option value="inStock">In Stock</option>
+              <option value="outOfStock">Out of Stock</option>
+            </select>
           </div>
           <div>
             <Label htmlFor="expireDate" className="text-gray-300 mb-2 font-medium block">Expire Date</Label>
